@@ -8,7 +8,7 @@ public class DragDrop : MonoBehaviour, IBeginDragHandler,
     IDragHandler,
     IEndDragHandler
 {
-    [SerializeField] private Canvas canvas;
+    //[SerializeField] private Canvas canvas;
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
  
