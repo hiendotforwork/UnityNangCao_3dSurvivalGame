@@ -2,14 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InventorySystem : MonoBehaviour
 {
     public static InventorySystem Instance { get; set; }
  
     public GameObject inventoryScreenUI;
+    public List<GameObject> slotList = new List<GameObject>();
+    public List<string> itemList = new List<string>();
+    private GameObject itemToAdd;
+    private GameObject whatSlotToEquid;
     public bool isOpen;
-    
+    //public bool isFull;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -25,8 +30,19 @@ public class InventorySystem : MonoBehaviour
     void Start()
     {
         isOpen = false;
+        PopulateSlotList();
     }
-    
+
+    private void PopulateSlotList()
+    {
+        foreach (Transform child in inventoryScreenUI.transform)
+        {
+            if (child.CompareTag("Slot"))
+            {
+                slotList.Add(child.gameObject);
+            }
+        }
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.I) && !isOpen)
@@ -44,5 +60,46 @@ public class InventorySystem : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             isOpen = false;
         }
+    }
+
+    public void AddToInventory(string itemName)
+    {
+        whatSlotToEquid = FindNextEmtySlot();
+        itemToAdd=Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquid.transform.position, whatSlotToEquid.transform.rotation);
+        itemToAdd.transform.SetParent(whatSlotToEquid.transform);
+        itemList.Add(itemName);
+    }
+
+    public bool CheckIfFull()
+    {
+        int counter = 0;
+        foreach (GameObject slot in slotList)
+        {
+            if (slot.transform.childCount > 0)
+            {
+                counter++;
+            }
+        }
+
+        if (counter == slotList.Count)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private GameObject FindNextEmtySlot()
+    {
+        foreach (GameObject slot in slotList)
+        {
+            if (slot.transform.childCount == 0)
+            {
+                return slot;
+            }
+        }
+        return new GameObject();
     }
 }

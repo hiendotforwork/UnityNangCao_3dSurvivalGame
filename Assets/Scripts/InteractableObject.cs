@@ -16,8 +16,16 @@ public class InteractableObject : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0) && playerInRange && SelectionManager.Instance.onTarget)
         {
-            Debug.Log("Item added to inventory");
-            Destroy(gameObject);
+            //Ig the inventory is not full
+            if (!InventorySystem.Instance.CheckIfFull())
+            {
+                InventorySystem.Instance.AddToInventory(ItemName);
+                Destroy(gameObject);
+            }
+            else
+            {
+                Debug.Log("Inventory is full");
+            }
         }
     }
 
