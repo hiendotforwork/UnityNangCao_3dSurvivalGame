@@ -79,9 +79,9 @@ public class InventorySystem : MonoBehaviour
         {
             if (slot.transform.childCount > 0)
             {
-                string name = slot.transform.GetChild(0).name;
-                string result = name.Replace("(Clone)", "");
-                itemList.Add(result);
+                string name = slot.transform.GetChild(0).name; // Lấy tên gốc, VD: "Stone(Clone)"
+                string cleanName = name.Replace("(Clone)", ""); // Làm sạch, thành: "Stone"
+                itemList.Add(cleanName); // Thêm tên đã làm sạch vào danh sách
             }
         }
     }
@@ -133,7 +133,7 @@ public class InventorySystem : MonoBehaviour
     public void RemoveItem(string nameToRemove, int amountToRemove)
     {
         int counter=amountToRemove;
-        for (var i =slotList.Count -1; i == 0; i--)
+        for (var i = slotList.Count - 1; i >= 0; i--)
         {
             if (slotList[i].transform.childCount > 0)
             {
@@ -144,9 +144,16 @@ public class InventorySystem : MonoBehaviour
                 }
             }
         }
+        StartCoroutine(RefreshInventoryAfterRemoval());
+    }
+
+    private IEnumerator RefreshInventoryAfterRemoval()
+    {
+        yield return null;
         ReCalculateList();
         CraftingSystem.Instance.RefeshNeededItems();
     }
+
     void TriggerPickupPopUp(string itemName, Sprite itemSprite)
     {
         // Cập nhật thông tin UI

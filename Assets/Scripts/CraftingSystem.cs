@@ -113,10 +113,10 @@ public class CraftingSystem : MonoBehaviour
             switch (itemName)
             {
                 case "Stone":
-                    stone_count++;
+                    stone_count += 1;
                     break;
                 case "Stick":
-                    stick_count++;
+                    stick_count += 1; 
                     break;
             }
         }

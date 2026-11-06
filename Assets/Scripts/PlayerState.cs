@@ -19,7 +19,7 @@ public class PlayerState : MonoBehaviour
     public float maxHydrationPercent;
 
     public GameObject playerBody;
-    public bool isHydrationActive;
+    public bool isHydrationActive = true;
 
     private void Awake()
     {
@@ -52,10 +52,6 @@ public class PlayerState : MonoBehaviour
         {
             currentCalories -= 10;
         }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            currentHydrationPercent -= 10;
-        }
     }
 
     public IEnumerator DecreaseHydration()
@@ -63,7 +59,7 @@ public class PlayerState : MonoBehaviour
         while (isHydrationActive)
         {
             currentHydrationPercent -= 1;
-            yield return new WaitForSeconds(2f); // Đợi 2 giây rồi mới trừ tiếp
+            yield return new WaitForSeconds(5f); // Đợi 5 giây rồi mới trừ tiếp
         }
     }
 }
