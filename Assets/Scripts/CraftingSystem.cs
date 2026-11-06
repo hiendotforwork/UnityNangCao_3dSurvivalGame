@@ -53,7 +53,21 @@ public class CraftingSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            isOpen = !isOpen;
+            craftingScreenUI.SetActive(isOpen);
+            toolsScreenUI.SetActive(false);
+
+            if (isOpen)
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else if (!InventorySystem.Instance.isOpen)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
     }
 
     void OpenToolsCategory()
