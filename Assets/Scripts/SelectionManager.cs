@@ -11,7 +11,9 @@ public class SelectionManager : MonoBehaviour
     public GameObject selectedObject;
     public GameObject interaction_Info_UI;
     TextMeshProUGUI interaction_text;
- 
+    public GameObject centerDotImage; // Chấm tròn tâm ngắm mặc định
+    public GameObject handIcon;       // Icon bàn tay vừa tạo
+
     private void Start()
     {
         onTarget = false;
@@ -48,6 +50,17 @@ public class SelectionManager : MonoBehaviour
             {
                 onTarget = false;
                 interaction_Info_UI.SetActive(false);
+            }
+            
+            if (interactable.CompareTag("Pickable"))
+            {
+                centerDotImage.SetActive(false); // Ẩn chấm tròn
+                handIcon.SetActive(true);        // Hiện bàn tay
+            }
+            else
+            {
+                centerDotImage.SetActive(true);
+                handIcon.SetActive(false);
             }
         }
         else

@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class InventorySystem : MonoBehaviour
 {
@@ -14,6 +16,11 @@ public class InventorySystem : MonoBehaviour
     private GameObject itemToAdd;
     private GameObject whatSlotToEquid;
     public bool isOpen;
+    public GameObject pickupAlert;
+    public TextMeshProUGUI pickupName;
+    public Image pickupImage;
+    // Biến này dùng để theo dõi tiến trình ẩn Pop-up
+    private Coroutine hidePopupCoroutine;
     //public bool isFull;
     private void Awake()
     {
@@ -65,12 +72,30 @@ public class InventorySystem : MonoBehaviour
         }
     }
 
+    public void ReCalculateList()
+    {
+        itemList.Clear();
+        foreach (GameObject slot in slotList)
+        {
+            if (slot.transform.childCount > 0)
+            {
+                string name = slot.transform.GetChild(0).name;
+                string str2 = ("Clone");
+                string result = name.Replace(str2, "");
+                itemList.Add(result);
+            }
+        }
+    }
+
     public void AddToInventory(string itemName)
     {
         whatSlotToEquid = FindNextEmtySlot();
         itemToAdd=Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquid.transform.position, whatSlotToEquid.transform.rotation);
         itemToAdd.transform.SetParent(whatSlotToEquid.transform);
-        itemList.Add(itemName);
+        //itemList.Add(itemName);
+        ReCalculateList();
+        CraftingSystem.Instance.RefeshNeededItems();
+        TriggerPickupPopUp(itemName, itemToAdd.GetComponent<Image>().sprite);
     }
 
     public bool CheckIfFull()
@@ -120,20 +145,31 @@ public class InventorySystem : MonoBehaviour
                 }
             }
         }
+        ReCalculateList();
+        CraftingSystem.Instance.RefeshNeededItems();
     }
-
-    public void ReCaculeList()
+    void TriggerPickupPopUp(string itemName, Sprite itemSprite)
     {
-        itemList.Clear();
-        foreach (GameObject slot in slotList)
+        // Cập nhật thông tin UI
+        pickupAlert.SetActive(true);
+        pickupName.text = itemName;
+        pickupImage.sprite = itemSprite;
+
+        // Bước quan trọng: Nếu đang có một tiến trình đếm ngược ẩn Pop-up chạy dở, hãy dừng nó lại
+        if (hidePopupCoroutine != null)
         {
-            if (slot.transform.childCount > 0)
-            {
-                string name=slot.transform.GetChild(0).name;
-                string str2 = ("Clone");
-                string result = name.Replace(str2, "");
-                itemList.Add(result);
-            }
+            StopCoroutine(hidePopupCoroutine);
         }
+
+        // Bắt đầu một tiến trình đếm ngược 2 giây mới và gán nó vào biến quản lý
+        hidePopupCoroutine = StartCoroutine(HidePopupAfterSeconds(2f));
+    }
+    private IEnumerator HidePopupAfterSeconds(float seconds)
+    {
+        // Đợi số giây truyền vào (ở đây là 2 giây)
+        yield return new WaitForSeconds(seconds);
+
+        // Sau khi đợi xong, ẩn Pop-up đi
+        pickupAlert.SetActive(false);
     }
 }
