@@ -53,20 +53,17 @@ public class CraftingSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RefeshNeededItems();
-        if (Input.GetKeyDown(KeyCode.C) && !isOpen)
+        if (Input.GetKeyDown(KeyCode.C))
         {
-            craftingScreenUI.SetActive(true);
-            Cursor.lockState = CursorLockMode.None;
-            isOpen = true;
- 
-        }
-        else if (Input.GetKeyDown(KeyCode.C) && isOpen)
-        {
-            craftingScreenUI.SetActive(false);
+            isOpen = !isOpen;
+            craftingScreenUI.SetActive(isOpen);
             toolsScreenUI.SetActive(false);
-            isOpen = false;
-            if (!InventorySystem.Instance.isOpen)
+
+            if (isOpen)
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else if (!InventorySystem.Instance.isOpen)
             {
                 Cursor.lockState = CursorLockMode.Locked;
             }
@@ -104,9 +101,9 @@ public class CraftingSystem : MonoBehaviour
     public IEnumerator calculate()
     {
         yield return new WaitForSeconds(1f);
-        InventorySystem.Instance.ReCaculeList();
+        InventorySystem.Instance.ReCalculateList();
     }
-    private void RefeshNeededItems()
+    public void RefeshNeededItems()
     {
         int stone_count = 0;
         int stick_count = 0;
